@@ -1,0 +1,112 @@
+Bellman Ford
+import java.util.Scanner;
+public class BellmanFord {
+private int[] D; // Distance array
+private int num_ver; // Number of vertices
+public static final int MAX_VALUE = 999;
+public BellmanFord(int num_ver) {
+this.num_ver = num_ver;
+D = new int[num_ver + 1];
+}
+public void BellmanFordEvaluation(int source, int[][] A) {
+for (int node = 1; node <= num_ver; node++) {
+D[node] = MAX_VALUE;
+}
+D[source] = 0;
+for (int node = 1; node <= num_ver - 1; node++) {
+for (int sn = 1; sn <= num_ver; sn++) {
+for (int dn = 1; dn <= num_ver; dn++) {
+if (A[sn][dn] != MAX_VALUE) {
+if (D[dn] > D[sn] + A[sn][dn]) {
+D[dn] = D[sn] + A[sn][dn];
+}
+}
+}
+}
+}
+for (int sn = 1; sn <= num_ver; sn++) {
+for (int dn = 1; dn <= num_ver; dn++) {
+if (A[sn][dn] != MAX_VALUE) {
+if (D[dn] > D[sn] + A[sn][dn]) {
+System.out.println("The Graph contains a negative edge cycle");
+return;
+}
+}
+}
+}
+for (int vertex = 1; vertex <= num_ver; vertex++) {
+System.out.println("Distance from source " + source + " to vertex " + vertex
++ " is " + D[vertex]);
+}
+}
+public static void main(String[] args) {
+int num_ver = 0, source;
+Scanner scanner = new Scanner(System.in);
+System.out.println("Enter the number of vertices:");
+num_ver = scanner.nextInt();
+int[][] A = new int[num_ver + 1][num_ver + 1];
+System.out.println("Enter the adjacency matrix (use 0 for no direct edge):");
+for (int sn = 1; sn <= num_ver; sn++) {
+for (int dn = 1; dn <= num_ver; dn++) {
+A[sn][dn] = scanner.nextInt();
+if (sn == dn) {
+A[sn][dn] = 0; // Distance to self is 0
+} else if (A[sn][dn] == 0) {
+A[sn][dn] = MAX_VALUE; // No edge represented by MAX_VALUE
+}
+}
+}
+System.out.println("Enter the source vertex:");
+source = scanner.nextInt();
+BellmanFord bellmanFord = new BellmanFord(num_ver);
+bellmanFord.BellmanFordEvaluation(source, A);
+scanner.close();
+}
+}
+Leaky Bucket
+import java.util.Scanner;
+class Queue {
+int[] q;
+int front = 0, rear = 0, size;
+public Queue(int size) {
+this.size = size;
+q = new int[size];
+}
+void insert(int n) {
+Scanner in = new Scanner(System.in);
+for (int i = 0; i < n; i++) {
+System.out.print("\nEnter packet " + (i + 1) + ": ");
+int ele = in.nextInt();
+if (rear == size) {
+System.out.println("Queue full. Lost Packet: " + ele);
+} else {
+q[rear++] = ele;
+}
+}
+}
+void delete() {
+if (front == rear) {
+System.out.println("Queue is empty.");
+return;
+}
+System.out.println("Processing packets:");
+while (front < rear) {
+try {
+Thread.sleep(1000);
+} catch (InterruptedException e) {}
+System.out.println("Leaked Packet: " + q[front++]);
+}
+}
+}
+public class Leaky {
+public static void main(String[] args) {
+Scanner src = new Scanner(System.in);
+System.out.print("Enter queue size: ");
+int size = src.nextInt();
+System.out.print("Enter number of packets: ");
+int numPackets = src.nextInt();
+Queue queue = new Queue(size);
+queue.insert(numPackets);
+queue.delete();
+}
+}
